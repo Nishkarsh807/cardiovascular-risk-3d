@@ -1,0 +1,703 @@
+/* CardioVision 3D Medical HUD Stylesheet */
+:root {
+  --bg-primary: #0a0e17;
+  --bg-card: rgba(16, 24, 39, 0.85);
+  --bg-card-hover: rgba(24, 36, 58, 0.95);
+  --border-color: rgba(56, 189, 248, 0.18);
+  --border-focus: rgba(56, 189, 248, 0.6);
+  --text-main: #f1f5f9;
+  --text-muted: #94a3b8;
+  --accent-cyan: #00e5ff;
+  --accent-blue: #0284c7;
+  --risk-low: #00e676;
+  --risk-low-bg: rgba(0, 230, 118, 0.15);
+  --risk-med: #ffb300;
+  --risk-med-bg: rgba(255, 179, 0, 0.15);
+  --risk-high: #ff1744;
+  --risk-high-bg: rgba(255, 23, 68, 0.2);
+  --glow-cyan: 0 0 15px rgba(0, 229, 255, 0.35);
+  --font-mono: "SF Mono", "Consolas", "Courier New", monospace;
+  --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: var(--bg-primary);
+  color: var(--text-main);
+  font-family: var(--font-sans);
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  user-select: none;
+}
+
+/* Header & Disclaimer Banner */
+header.app-header {
+  background: rgba(13, 19, 33, 0.95);
+  border-bottom: 1px solid var(--border-color);
+  backdrop-filter: blur(12px);
+  padding: 8px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  z-index: 100;
+}
+
+.header-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.brand-icon {
+  width: 32px;
+  height: 32px;
+  background: radial-gradient(circle, #ff1744 20%, #990000 80%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 12px rgba(255, 23, 68, 0.6);
+  animation: pulse-heart 1.2s infinite ease-in-out;
+}
+
+@keyframes pulse-heart {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.12); }
+}
+
+.brand h1 {
+  font-size: 1.15rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.badge-track {
+  font-size: 0.68rem;
+  background: rgba(0, 229, 255, 0.15);
+  border: 1px solid var(--accent-cyan);
+  color: var(--accent-cyan);
+  padding: 2px 8px;
+  border-radius: 12px;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.preset-selector-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.preset-selector-wrap label {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+select.preset-select {
+  background: #111a2e;
+  border: 1px solid var(--border-color);
+  color: #fff;
+  font-size: 0.82rem;
+  padding: 5px 10px;
+  border-radius: 6px;
+  outline: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+select.preset-select:hover, select.preset-select:focus {
+  border-color: var(--accent-cyan);
+  box-shadow: var(--glow-cyan);
+}
+
+.btn-nav {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border-color);
+  color: var(--text-main);
+  padding: 5px 12px;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s;
+}
+
+.btn-nav:hover, .btn-nav.active {
+  background: var(--accent-blue);
+  border-color: var(--accent-cyan);
+  color: #fff;
+}
+
+/* Clinical Safety Disclaimer Banner */
+.disclaimer-banner {
+  background: rgba(255, 179, 0, 0.08);
+  border: 1px solid rgba(255, 179, 0, 0.35);
+  border-radius: 4px;
+  padding: 4px 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.72rem;
+  color: #ffd54f;
+  line-height: 1.3;
+}
+
+.disclaimer-icon {
+  font-size: 0.85rem;
+}
+
+/* App Main Layout */
+.app-container {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+  position: relative;
+}
+
+/* Left / Center 3D Anatomical Canvas */
+.canvas-panel {
+  flex: 1.15;
+  position: relative;
+  background: radial-gradient(circle at center, #111a2f 0%, #060911 100%);
+  display: flex;
+  overflow: hidden;
+}
+
+#heart3d-canvas-container {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+/* Floating 3D Controls HUD */
+.hud-controls-top {
+  position: absolute;
+  top: 14px;
+  left: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  z-index: 10;
+}
+
+.btn-group-pill {
+  display: flex;
+  background: rgba(10, 16, 28, 0.85);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 4px;
+  gap: 4px;
+  backdrop-filter: blur(8px);
+}
+
+.btn-pill {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  padding: 5px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-weight: 500;
+}
+
+.btn-pill:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.btn-pill.active {
+  background: var(--accent-blue);
+  color: #fff;
+  font-weight: 600;
+  box-shadow: 0 0 10px rgba(0, 229, 255, 0.3);
+}
+
+.hud-legend {
+  position: absolute;
+  bottom: 16px;
+  left: 16px;
+  background: rgba(10, 16, 28, 0.85);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 8px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  backdrop-filter: blur(8px);
+  z-index: 10;
+}
+
+.legend-title {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+.legend-items {
+  display: flex;
+  gap: 12px;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.72rem;
+}
+
+.dot-indicator {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.dot-low { background: var(--risk-low); box-shadow: 0 0 6px var(--risk-low); }
+.dot-med { background: var(--risk-med); box-shadow: 0 0 6px var(--risk-med); }
+.dot-high { background: var(--risk-high); box-shadow: 0 0 6px var(--risk-high); }
+
+.hud-vessel-tooltip {
+  position: absolute;
+  bottom: 16px;
+  right: 16px;
+  background: rgba(10, 16, 28, 0.92);
+  border: 1px solid var(--accent-cyan);
+  border-radius: 8px;
+  padding: 10px 14px;
+  max-width: 280px;
+  z-index: 10;
+  backdrop-filter: blur(10px);
+  display: none;
+  animation: fadeIn 0.2s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.tooltip-title {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--accent-cyan);
+  margin-bottom: 4px;
+}
+
+.tooltip-desc {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  line-height: 1.35;
+}
+
+/* Right Dashboard Panel */
+.dashboard-panel {
+  flex: 1;
+  background: #0d1322;
+  border-left: 1px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #1e293b transparent;
+}
+
+.dashboard-panel::-webkit-scrollbar {
+  width: 6px;
+}
+.dashboard-panel::-webkit-scrollbar-thumb {
+  background: #1e293b;
+  border-radius: 3px;
+}
+
+/* Dashboard Navigation Tabs */
+.dashboard-tabs {
+  display: flex;
+  background: rgba(13, 19, 34, 0.95);
+  border-bottom: 1px solid var(--border-color);
+  padding: 6px 14px 0 14px;
+  gap: 8px;
+  position: sticky;
+  top: 0;
+  z-index: 20;
+}
+
+.tab-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 8px 12px;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.tab-btn:hover {
+  color: #fff;
+}
+
+.tab-btn.active {
+  color: var(--accent-cyan);
+  border-bottom-color: var(--accent-cyan);
+}
+
+/* Tab Views */
+.tab-content {
+  display: none;
+  padding: 16px;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.tab-content.active {
+  display: flex;
+}
+
+/* Clinical Cards */
+.card-widget {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  backdrop-filter: blur(8px);
+  transition: border-color 0.2s;
+}
+
+.card-widget:hover {
+  border-color: rgba(56, 189, 248, 0.4);
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.card-title {
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Overall CAD Hero Section */
+.cad-hero-box {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  background: rgba(15, 23, 42, 0.6);
+  border-radius: 8px;
+  padding: 12px;
+}
+
+.cad-gauge-circle {
+  width: 90px;
+  height: 90px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cad-gauge-circle svg {
+  transform: rotate(-90deg);
+}
+
+.cad-gauge-text {
+  position: absolute;
+  text-align: center;
+  font-size: 1.15rem;
+  font-weight: 800;
+  font-family: var(--font-mono);
+  color: #fff;
+}
+
+.cad-gauge-label {
+  font-size: 0.62rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  margin-top: -2px;
+}
+
+.cad-summary-text {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.cad-diagnosis-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+.badge-risk {
+  display: inline-block;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 4px;
+  text-transform: uppercase;
+  width: fit-content;
+}
+
+.badge-severe { background: var(--risk-high-bg); color: var(--risk-high); border: 1px solid var(--risk-high); }
+.badge-high { background: rgba(255, 87, 34, 0.2); color: #ff7043; border: 1px solid #ff7043; }
+.badge-moderate { background: var(--risk-med-bg); color: var(--risk-med); border: 1px solid var(--risk-med); }
+.badge-low { background: var(--risk-low-bg); color: var(--risk-low); border: 1px solid var(--risk-low); }
+
+/* Vessel Cards Grid */
+.vessels-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.vessel-card {
+  background: rgba(15, 23, 42, 0.7);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+  position: relative;
+  overflow: hidden;
+}
+
+.vessel-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--accent-cyan);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+.vessel-card.active-vessel {
+  border-color: var(--accent-cyan);
+  background: rgba(0, 229, 255, 0.08);
+}
+
+.vessel-card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.vessel-abbr {
+  font-size: 0.95rem;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+}
+
+.vessel-prob-val {
+  font-size: 0.9rem;
+  font-weight: 700;
+  font-family: var(--font-mono);
+}
+
+.vessel-full-name {
+  font-size: 0.68rem;
+  color: var(--text-muted);
+  line-height: 1.2;
+}
+
+.vessel-territory {
+  font-size: 0.65rem;
+  color: #64748b;
+  margin-top: 2px;
+}
+
+.progress-bar-wrap {
+  width: 100%;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 3px;
+  overflow: hidden;
+  margin-top: 4px;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.4s ease;
+}
+
+/* SHAP Waterfall & Feature Attribution */
+.shap-chart-container {
+  height: 220px;
+  position: relative;
+  margin-top: 6px;
+}
+
+.category-breakdown-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.category-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.76rem;
+  padding: 4px 8px;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 4px;
+}
+
+.cat-name {
+  color: var(--text-muted);
+}
+
+.cat-impact {
+  font-family: var(--font-mono);
+  font-weight: 600;
+}
+
+/* Patient Input Studio Grid */
+.input-studio-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.input-group label {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  font-weight: 500;
+  display: flex;
+  justify-content: space-between;
+}
+
+.input-slider-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+input[type="range"] {
+  flex: 1;
+  accent-color: var(--accent-cyan);
+  cursor: pointer;
+}
+
+.slider-val-badge {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--accent-cyan);
+  min-width: 42px;
+  text-align: right;
+}
+
+.checkbox-group-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+}
+
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.75rem;
+  color: var(--text-main);
+  cursor: pointer;
+}
+
+.btn-primary-action {
+  background: linear-gradient(135deg, #0284c7 0%, #00b4d8 100%);
+  border: 1px solid var(--accent-cyan);
+  color: #fff;
+  font-size: 0.85rem;
+  font-weight: 700;
+  padding: 10px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(0, 180, 216, 0.4);
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.btn-primary-action:hover {
+  filter: brightness(1.15);
+  box-shadow: 0 6px 20px rgba(0, 229, 255, 0.5);
+  transform: translateY(-1px);
+}
+
+/* Metrics Table */
+.metrics-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.78rem;
+  text-align: left;
+}
+
+.metrics-table th, .metrics-table td {
+  padding: 8px 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.metrics-table th {
+  color: var(--accent-cyan);
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: 0.68rem;
+}
+
+.metrics-table td.val-bold {
+  font-family: var(--font-mono);
+  font-weight: 700;
+}
